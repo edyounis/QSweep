@@ -81,7 +81,10 @@ def right_zero_ij_element(unitary: np.ndarray, i: int, j: int) -> Tuple[float, f
     zs = z / dem
     gamma = -(np.angle(zs) + np.angle(-ws))
     alpha = -(np.angle(zs) - np.angle(-ws))
-    beta = 2 * np.arccos(np.abs(zs))
+    mag = np.abs(zs)
+    if mag > 1:
+        mag = 1
+    beta = 2 * np.arccos(mag)
 
     return alpha, beta, gamma
 
@@ -114,7 +117,7 @@ def build_circuit_row_by_row(unitary: UnitaryMatrix) -> Circuit:
 
     for i in reversed(range(1, d)):
         for j in range(i):
-            if target[i, j] == 0:
+            if j != i - 1 and target[i, j] == 0:
                 continue
             a, b, g = right_zero_ij_element(target, i, j)
             rz = EmbeddedGate(RZGate(), [d], [j, j + 1])
@@ -143,6 +146,9 @@ def test_col_by_col(d):
 
 
 if __name__ == "__main__":
+    test_row_by_row(2)
+    test_col_by_col(2)
+
     test_row_by_row(3)
     test_col_by_col(3)
 
