@@ -3,17 +3,10 @@ from __future__ import annotations
 
 import os
 
-from setuptools import find_packages
 from setuptools import setup
 
 root_dir_path = os.path.abspath(os.path.dirname(__file__))
-pkg_dir_path = os.path.join(root_dir_path, 'qsweep')
 readme_path = os.path.join(root_dir_path, 'README.md')
-version_path = os.path.join(pkg_dir_path, 'version.py')
-
-# Load Version Number
-with open(version_path) as version_file:
-    exec(version_file.read())
 
 # Load Readme
 with open(readme_path) as readme_file:
@@ -21,7 +14,7 @@ with open(readme_path) as readme_file:
 
 setup(
     name='qsweep',
-    version=__version__,  # type: ignore # noqa # Defined in version.py loaded above
+    version='0.1.0',
     description='QSweep Single-Qudit Synthesis',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -59,7 +52,7 @@ setup(
         'Bug Tracker': 'https://github.com/edyounis/QSweep/issues',
         'Source Code': 'https://github.com/edyounis/QSweep',
     },
-    packages=find_packages(exclude=['examples*', 'test*']),
+    py_modules=['qsweep'],
     install_requires=[
         'bqskit>=1.1.1',
     ],

@@ -7,7 +7,6 @@ repos:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-docstring-first
-        exclude: 'bqskit/ext/rigetti.py'
     -   id: debug-statements
     -   id: double-quote-string-fixer
     -   id: name-tests-test
@@ -69,7 +68,6 @@ repos:
     rev: v1.5.0
     hooks:
     - id: mypy
-      exclude: tests/qis/test_pauli.py
       additional_dependencies: ["numpy>=1.21"]
 -   repo: https://github.com/PyCQA/flake8
     rev: 6.1.0
@@ -78,5 +76,4 @@ repos:
         args:
             - --ignore=E741,W503,F901,E731,TYP006,TYP001,TYP002
             - --max-line-length=80
-            - --per-file-ignores=bqskit/runtime/worker.py:E402
         additional_dependencies: [flake8-typing-imports==1.13.0]
