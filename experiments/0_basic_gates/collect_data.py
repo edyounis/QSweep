@@ -11,10 +11,10 @@ from bqskit.passes.search.heuristics.dijkstra import DijkstraHeuristic
 
 from qsweep import QSweepPass
 
+from qsearch import QSearchLayerGenQuquartSQ, QSearchLayerGenQutritSQ
 sys.path.append('..')
 from utils import count_pulses
 from analytical import build_circuit_row_by_row
-from qsearch import QSearchLayerGenQuquartSQ, QSearchLayerGenQutritSQ
 
 # Generating unitaries
 
@@ -59,16 +59,12 @@ for name, utry in unitaries.items():
     analytical_data['circuits'][name] = circuit
     analytical_data['num_pulses'][name] = count_pulses(circuit)
 
-print("Times:", np.mean(analytical_data['times']), np.std(analytical_data['times']))
-print("Operations:", np.mean(analytical_data['num_operations']), np.std(analytical_data['num_operations']))
-print("Pulses:", np.mean(analytical_data['num_pulses']), np.std(analytical_data['num_pulses']))
-
 # Compile with qsweep
 qsweep_data = {
-    'times': [],
-    'num_operations': [],
-    'num_pulses': [],
-    'circuits': [],
+    'times': {},
+    'num_operations': {},
+    'num_pulses': {},
+    'circuits': {},
 }
 
 qsweep = QSweepPass({RZGate(), RXGate().with_all_frozen_params([np.pi/2])})
@@ -84,18 +80,16 @@ for name, utry in unitaries.items():
     qsweep_data['circuits'][name] = circuit
     qsweep_data['num_pulses'][name] = count_pulses(circuit)
 
-print("Times:", np.mean(qsweep_data['times']), np.std(qsweep_data['times']))
-print("Operations:", np.mean(qsweep_data['num_operations']), np.std(qsweep_data['num_operations']))
-print("Pulses:", np.mean(qsweep_data['num_pulses']), np.std(qsweep_data['num_pulses']))
-
 # Compile with qsearch
 qsearch_data = {
-    'times': [],
-    'num_operations': [],
-    'num_pulses': [],
-    'circuits': [],
+    'times': {},
+    'num_operations': {},
+    'num_pulses': {},
+    'circuits': {},
 }
 
+from bqskit import enable_logging
+enable_logging(True)
 compiler = Compiler()
 
 for name, utry in unitaries.items():
@@ -118,9 +112,6 @@ for name, utry in unitaries.items():
     qsearch_data['num_pulses'][name] = count_pulses(circuit)
 
 compiler.close()
-print("Times:", np.mean(qsearch_data['times']), np.std(qsearch_data['times']))
-print("Operations:", np.mean(qsearch_data['num_operations']), np.std(qsearch_data['num_operations']))
-print("Pulses:", np.mean(qsearch_data['num_pulses']), np.std(qsearch_data['num_pulses']))
 
 import pickle
 with open('experiment_data.pkl', 'wb') as f:

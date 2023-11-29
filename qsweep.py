@@ -19,11 +19,10 @@ from bqskit.ir.opt.cost.generator import CostFunctionGenerator
 from bqskit.qis.state.state import StateVector
 from bqskit.qis.state.system import StateSystem
 
-if TYPE_CHECKING:
-    from bqskit.qis.unitary.unitary import RealVector
-    from bqskit.ir.circuit import Circuit
-    from bqskit.qis.unitary.unitarymatrix import UnitaryMatrix
-    from bqskit.ir.opt.cost.function import CostFunction
+from bqskit.qis.unitary.unitary import RealVector
+from bqskit.ir.circuit import Circuit
+from bqskit.qis.unitary.unitarymatrix import UnitaryMatrix
+from bqskit.ir.opt.cost.function import CostFunction
 
 
 class ElemsToZero(DifferentiableCostFunction):

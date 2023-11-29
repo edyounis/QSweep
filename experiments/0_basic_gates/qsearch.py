@@ -41,8 +41,8 @@ class QSearchLayerGenQuquartSQ(LayerGenerator):
     def gen_successors(self, circuit: Circuit, data: PassData) -> list[Circuit]:
         successors = []
         for gate in [X90_01_4, X90_12_4, X90_23_4, Z_01_4, Z_12_4, Z_23_4]:
-            if circuit.num_operations > 0 and circuit[-1, 0].gate == gate:
-                continue
+            # if circuit.num_operations > 0 and circuit[-1, 0].gate == gate:
+            #    continue  # This actually makes it slower :shrug:
             successor = circuit.copy()
             successor.append_gate(gate, 0)
             successors.append(successor)
