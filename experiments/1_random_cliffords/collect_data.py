@@ -87,14 +87,14 @@ for d in ds:
     for i, utry in enumerate(cliffords[d]):
         if i % 10 == 0:
             print(f"QSweep Compiling d = {d}, # {i}...")
-            utry = UnitaryMatrix(utry, [utry.shape[0]])
-            start = timer()
-            circuit = qsweep.synthesize_non_async(utry)
-            end = timer()
-            qsweep_data[d]['times'].append(end - start)
-            qsweep_data[d]['num_operations'].append(circuit.num_operations)
-            qsweep_data[d]['circuits'].append(circuit)
-            qsweep_data[d]['num_pulses'].append(count_pulses(circuit))
+        utry = UnitaryMatrix(utry, [utry.shape[0]])
+        start = timer()
+        circuit = qsweep.synthesize_non_async(utry)
+        end = timer()
+        qsweep_data[d]['times'].append(end - start)
+        qsweep_data[d]['num_operations'].append(circuit.num_operations)
+        qsweep_data[d]['circuits'].append(circuit)
+        qsweep_data[d]['num_pulses'].append(count_pulses(circuit))
 
 # Compile with qsearch
 qsearch_data = {
