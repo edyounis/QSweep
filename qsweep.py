@@ -356,7 +356,7 @@ class QSweepPass(SynthesisPass):
 
     def synthesize_su2(self, target, circuit, layer_gen, data):
         data['qsweep_layer_gen_j'] = 0
-        if ExactUnitaryCostGenerator().calc_cost(circuit, target) < 1e-4:
+        if ExactUnitaryCostGenerator().calc_cost(circuit, target) < 5e-8:
             return circuit
         
         frontier = Frontier(target, DijkstraHeuristic())
@@ -369,7 +369,7 @@ class QSweepPass(SynthesisPass):
             multistarts=1,
         )
 
-        if ExactUnitaryCostGenerator().calc_cost(circuit, target) < 1e-4:
+        if ExactUnitaryCostGenerator().calc_cost(circuit, target) < 5e-8:
             return circuit
 
         frontier.add(circuit, 0)
@@ -394,7 +394,7 @@ class QSweepPass(SynthesisPass):
             ]
 
             for circuit in circuits:
-                if ExactUnitaryCostGenerator().calc_cost(circuit, target) < 1e-4:
+                if ExactUnitaryCostGenerator().calc_cost(circuit, target) < 5e-8:
                     return circuit
 
                 frontier.add(circuit, layer + 1)
