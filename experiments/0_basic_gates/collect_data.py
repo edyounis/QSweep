@@ -14,7 +14,7 @@ from qsweep import QSweepPass
 from qsearch import QSearchLayerGenQuquartSQ, QSearchLayerGenQutritSQ
 sys.path.append('..')
 from utils import count_pulses
-from analytical import build_circuit_row_by_row
+from analytical import build_circuit_row_by_row, build_circuit_column_by_column
 
 # Generating unitaries
 
