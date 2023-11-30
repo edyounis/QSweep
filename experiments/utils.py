@@ -4,6 +4,7 @@ from bqskit.ir.gates.constant.sx import SqrtXGate
 from bqskit.ir.gates.parameterized.rx import RXGate
 from bqskit.ir.gates.parameterized.ry import RYGate
 from bqskit.ir.gates.parameterized.rz import RZGate
+from bqskit.ir.gates.composed.frozenparam import FrozenParameterGate
 from bqskit.ir.circuit import Circuit
 
 
@@ -38,6 +39,11 @@ def count_pulses(circuit: Circuit) -> int:
                 count += 1
             elif op.gate.gate in [RYGate()]:
                 count += 2
+        if isinstance(op.gate, FrozenParameterGate):
+            if op.gate.gate in [RXGate()]:
+                count += 1
+        elif op.gate in [SqrtXGate()]:
+            count += 1
     return count
 
 
