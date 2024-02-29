@@ -4,6 +4,7 @@ from bqskit.ir.gates.constant.sx import SqrtXGate
 from bqskit.ir.gates.parameterized.rx import RXGate
 from bqskit.ir.gates.parameterized.ry import RYGate
 from bqskit.ir.gates.parameterized.rz import RZGate
+from bqskit.ir.gates.parameterized.u1 import U1Gate
 from bqskit.ir.gates.composed.frozenparam import FrozenParameterGate
 from bqskit.ir.circuit import Circuit
 
@@ -22,6 +23,13 @@ Z_4 = EmbeddedGate(Z, [4], [0, 1])
 EFZ_3 = EmbeddedGate(Z, [3], [1, 2])
 EFZ_4 = EmbeddedGate(Z, [4], [1, 2])
 FHZ_4 = EmbeddedGate(Z, [4], [2, 3])
+
+U1 = U1Gate()
+U1_3 = EmbeddedGate(U1, [3], [0, 1])
+U1_4 = EmbeddedGate(U1, [4], [0, 1])
+EFU1_3 = EmbeddedGate(U1, [3], [1, 2])
+EFU1_4 = EmbeddedGate(U1, [4], [1, 2])
+FHU1_4 = EmbeddedGate(U1, [4], [2, 3])
 
 
 def count_pulses(circuit: Circuit) -> int:
@@ -86,6 +94,29 @@ def format_to_qtrl(circuit: Circuit) -> list[list[str]]:
             # EFZ(-theta/2)@FHZ(theta)
             qtrl_circ.append([f'Q4/EFZ{(-op.params[0]/2) * 180 / np.pi}'])
             qtrl_circ.append([f'Q4/FHZ{op.params[0] * 180 / np.pi}'])
+        
+        elif gate == U1_3:
+            # Z(theta)*EFZ(-theta)
+            qtrl_circ.append([f'Q4/Z{(op.params[0]) * 180 / np.pi}'])
+            qtrl_circ.append([f'Q4/EFZ{(-op.params[0]) * 180 / np.pi}'])
+
+        elif gate == U1_4:
+            # Z(theta)*EFZ(-theta)
+            qtrl_circ.append([f'Q4/Z{(op.params[0]) * 180 / np.pi}'])
+            qtrl_circ.append([f'Q4/EFZ{(-op.params[0]) * 180 / np.pi}'])
+
+        elif gate == EFU1_3:
+            # EFZ(theta)
+            qtrl_circ.append([f'Q4/EFZ{(op.params[0]) * 180 / np.pi}'])
+
+        elif gate == EFU1_4:
+            # EFZ(theta)*FHZ(-theta)
+            qtrl_circ.append([f'Q4/EFZ{(op.params[0]) * 180 / np.pi}'])
+            qtrl_circ.append([f'Q4/FHZ{(-op.params[0]) * 180 / np.pi}'])
+
+        elif gate == FHU1_4:
+            # FHZ(theta)
+            qtrl_circ.append([f'Q4/FHZ{(op.params[0]) * 180 / np.pi}'])
 
         else:
             raise NotImplementedError
@@ -100,6 +131,8 @@ def test_format_to_qtrl():
     for theta in [0, 1, 2, 3, 4, 5, 2.23128917]:
         assert np.allclose(np.exp(-1j*theta/2)*Z(theta)@EFZ(-theta/2), Z_3.get_unitary([theta]))
         assert np.allclose(Z(-theta/2)*EFZ(theta), EFZ_3.get_unitary([theta]))
+        assert np.allclose(Z(theta)*EFZ(-theta), U1_3.get_unitary([theta]))
+        assert np.allclose(EFZ(theta), EFU1_3.get_unitary([theta]))
 
     Z = lambda theta : np.diag([1,np.exp(1j*theta),np.exp(1j*theta),np.exp(1j*theta)])
     EFZ = lambda theta : np.diag([1,1,np.exp(1j*theta),np.exp(1j*theta)])
@@ -109,6 +142,9 @@ def test_format_to_qtrl():
         assert np.allclose(np.exp(-1j*theta/2)*Z(theta)@EFZ(-theta/2), Z_4.get_unitary([theta]))
         assert np.allclose(Z(-theta/2)*EFZ(theta)@FHZ(-theta/2), EFZ_4.get_unitary([theta]))
         assert np.allclose(EFZ(-theta/2)@FHZ(theta), FHZ_4.get_unitary([theta]))
+        assert np.allclose(Z(theta)*EFZ(-theta), U1_4.get_unitary([theta]))
+        assert np.allclose(EFZ(theta)*FHZ(-theta), EFU1_4.get_unitary([theta]))
+        assert np.allclose(FHZ(theta), FHU1_4.get_unitary([theta]))
 
 
 if __name__ == "__main__":

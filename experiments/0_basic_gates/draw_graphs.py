@@ -38,7 +38,7 @@ ax.bar(x_nums + 1.5*bar_width, qsearch, label='QSearch', width=bar_width, linewi
 ax.set_xticks(x_nums, x)
 ax.set_ylabel('Time (s)')
 ax.set_yscale('log')
-ax.set_title('Single-Ququart Gate Synthesis Time')
+ax.set_title('Two-Qubit Gate as Single-Ququart Synthesis Time')
 for timeout in timeouts:
     ax.text(x_nums[x.index(timeout)] + 1.5*bar_width, 3600, 'TO', ha='center', va='bottom')
 
@@ -57,7 +57,7 @@ ax.hlines(qsearch[x.index('cy')] - 200, x_nums[x.index('cy')] + 0.8*bar_width, x
 ax.text(x_nums[x.index('cy')] - 0.18*bar_width, 0.005*(qsearch[x.index('cy')] + qsweep[x.index('cy')]), timediff2, ha='center', va='center', rotation=90)
 
 ax.legend()
-fig.savefig('time.png')
+fig.savefig('time.pdf')
 
 
 # Plotting quality
@@ -95,8 +95,35 @@ ax.bar(x_nums + 0.5*bar_width, qsweep, label='QSweep', width=bar_width, linewidt
 ax.bar(x_nums + 1.5*bar_width, qsearch, label='QSearch', width=bar_width, linewidth=0.5, edgecolor='black')
 ax.set_xticks(x_nums, x)
 ax.set_ylabel('Pulses in Decomposition')
-ax.set_title('Single-Ququart Gate Synthesis Quality')
+ax.set_title('Two-Qubit Gate as Single-Ququart Synthesis Quality')
 for timeout in timeouts:
     ax.text(x_nums[x.index(timeout)] + 1.65*bar_width, 0, 'TO', ha='center', va='bottom', fontsize=6)
 # ax.legend()
-fig.savefig('quality.png')
+fig.savefig('quality.pdf')
+
+
+# Stats for paper
+
+cbc_ms_avg = np.mean(list(data['cbc']['times'].values())) * 1000
+rbr_ms_avg = np.mean(list(data['rbr']['times'].values())) * 1000
+print(cbc_ms_avg)
+print(cbc_ms_avg / rbr_ms_avg)
+
+cbc_num_pulse_avg = np.mean(list(data['cbc']['num_pulses'].values()))
+rbr_num_pulse_avg = np.mean(list(data['rbr']['num_pulses'].values()))
+qsweep_num_pulse_avg = np.mean(list(data['qsweep']['num_pulses'].values()))
+qsearch_num_pulse_avg = np.mean(list(data['qsearch']['num_pulses'].values()))
+
+diffs=[]
+for x in data['qsearch']['num_pulses']:
+    diffs.append(data['qsearch']['num_pulses'][x] - data['qsweep']['num_pulses'][x])
+
+print(cbc_num_pulse_avg - qsweep_num_pulse_avg)
+print(rbr_num_pulse_avg - qsweep_num_pulse_avg)
+print(np.mean(diffs))
+
+
+diffs=[]
+for x in data['qsearch']['times']:
+    diffs.append(np.abs(data['qsearch']['times'][x] - data['qsweep']['times'][x])/data['qsweep']['times'][x])
+print(np.mean(diffs), np.max(diffs))

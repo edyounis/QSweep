@@ -13,17 +13,20 @@ from qsweep import QSweepPass
 
 sys.path.append('..')
 from utils import format_to_qtrl
+from test2 import QsweepSquarePass, SquareAnalyticalPass
 
-qsweep = QSweepPass({RZGate(), RXGate().with_all_frozen_params([np.pi/2])})
+# qsweep = QsweepSquarePass({RZGate(), RXGate().with_all_frozen_params([np.pi/2])})
+qsweep = SquareAnalyticalPass()
 
 compiler = Compiler()
 
-for d in ['qutrit', 'ququart']
+# for dtype in ['qutrit', 'ququart']:
+for dtype in ['ququart']:
     qtrl_circs = []
-    circs = np.load(f'{d}_rb_circs_for_ed.npy', allow_pickle=True)
+    circs = np.load(f'{dtype}_rb_circs_for_ed.npy', allow_pickle=True)
     for i, circ in enumerate(circs):
 
-        print(f"On {d} circuit {i} out of {len(circs)}...")
+        print(f"On {dtype} circuit {i} out of {len(circs)}...")
 
         # Load dimension
         d = len(circ[0])
@@ -34,18 +37,16 @@ for d in ['qutrit', 'ququart']
             circuit.append_gate(ConstantUnitaryGate(UnitaryMatrix(utry, [d]).to_special()), 0)
 
         # Compile
-        start = timer()
         out_circuit = compiler.compile(circuit, [
             ForEachBlockPass([qsweep]),
             UnfoldPass(),
         ])
-        end = timer()
 
         
         qtrl_circs.append(format_to_qtrl(out_circuit))
         
     import pickle
-    with open(f'{d}_rb_circs_compiled_qtrl_for_noah.pkl', 'wb') as f:
+    with open(f'{dtype}_rb_circs_compiled_qtrl_for_noah_square_analytical.pkl', 'wb') as f:
         pickle.dump(qtrl_circs, f)
 
 compiler.close()
